@@ -32,8 +32,8 @@ where
 
 - **MSE** minimizes the prediction error.
 - **Smoothness** penalizes the second derivative of the predicted signal
-
-**Smoothness = (d²y/dx²)²**\n
+- 
+$$\text{Smoothness} = \left(\frac{d^2y}{dx^2}\right)^2$$
 The smoothness term discourages high-frequency oscillations and prevents the neural network from fitting the noise.
 
 ---
