@@ -35,7 +35,7 @@ where
 
 
 \text{Smoothness} = \left(\frac{d^2y}{dx^2}\right)^2
-
+**Smoothness = (d²y/dx²)²**
 The smoothness term discourages high-frequency oscillations and prevents the neural network from fitting the noise.
 
 ---
