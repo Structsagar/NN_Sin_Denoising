@@ -26,9 +26,7 @@ The hidden layers use the **Tanh** activation function because:
 
 The total loss is defined as
 
-\[
-L = \text{MSE} + \lambda \times \text{Smoothness}
-\]
+$$Loss = \text{MSE} + \lambda \cdot \text{Smoothness}$$
 
 where
 
