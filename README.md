@@ -1,33 +1,88 @@
-#**Reinforced Smoothing Neural Network**
-###Building Neural Network Architecture
+# Reinforced Smoothing Neural Network for Sinusoidal Signal Denoising
 
+This repository demonstrates a neural network approach for denoising noisy sinusoidal signals using a **smoothness-regularized loss function**. Instead of minimizing only the Mean Squared Error (MSE), the model incorporates a curvature penalty based on the second-order derivative of the predicted signal, resulting in smoother and more physically meaningful predictions.
 
-*   One input | Two Hidden Layer | One Output
+---
 
-*   Non-Linear Activation FUnction : Tanh --> Since the ground truth sin(x) have both positive and negative values, for which the tanh is ideal, as its output range is (-1,1). Additionally, Tanh is infinitely differentiable. This is the requirement for the custom loss function, which relies on the second-order derivative (curvature) to enforce smoothness
+## Neural Network Architecture
 
-* Forward function for prediction
+The network consists of:
 
+- **Input Layer:** 1 neuron
+- **Hidden Layers:** 2 fully connected layers
+- **Output Layer:** 1 neuron
 
-### Loss Computation
-1.   **Smooth_Loss**: This function calculates the second-order derivative of the network's output with respect to the input. By minimizing the mean squared curvature ($d^2y/dx^2$), it discourage high-frequency oscillations caused by noise.
+### Activation Function
 
-$$Loss = \text{MSE} + \lambda \cdot \text{Smoothness}$$
+The hidden layers use the **Tanh** activation function because:
 
-2.   **custom_loss**: This is the primary objective function. It combines standard Mean Squared Error (MSE) with smoothness penalty, weighted by the hyperparameter $\lambda$ (lyambda), for reducing the overfitting and following the trend  with smooth regularization.
-###Training Loop:
+- The target signal, **sin(x)**, contains both positive and negative values.
+- Tanh naturally outputs values in the range **(-1, 1)**.
+- Tanh is infinitely differentiable, making it suitable for computing higher-order derivatives required in the custom smoothness loss.
 
-*   Created an object"model" for a class"Neural Network"
-*   **Optimizer used** : Adam optimizer for convergence
-* Loop iterates for N "epochs" times which includes forward pass for prediction and backward pass for computing and updating the optimized weights and biases
+---
 
+## Custom Loss Function
 
-###PLOT:
+The total loss is defined as
 
+\[
+L = \text{MSE} + \lambda \times \text{Smoothness}
+\]
 
-*   **Plot** reveals that the Neural network with only MSE function overfits the noisy data with the loss of 1.79%. However, penalizing the curvature with the lambda = 0.02 (i.e, introducing the smooth loss), the neural network sucessfully predicted the approximate sinx curve without overfitting.
+where
 
-* Loss evaluation in above cell depicts, the loss increases with the inclusion of the smoothness function which gives insight of moving away from the actual noise data.
+- **MSE** minimizes the prediction error.
+- **Smoothness** penalizes the second derivative of the predicted signal
 
-*   **Findings**: Denoising the input acceleration using Neural Network in the structure while preprecessing, it is necessary to penalize the curvature loss. If not, the neural network overfits the data and give unrealistic response of the structure while post processing in finite element analysis.
+\[
+\text{Smoothness} = \left(\frac{d^2y}{dx^2}\right)^2
+\]
 
+The smoothness term discourages high-frequency oscillations and prevents the neural network from fitting the noise.
+
+---
+
+## Training
+
+The model is trained using:
+
+- Optimizer: **Adam**
+- Forward propagation for prediction
+- Backpropagation for weight updates
+- User-defined number of epochs
+
+---
+
+## Results
+
+Two models are compared:
+
+1. Neural Network trained using only MSE loss.
+2. Neural Network trained using MSE + Smoothness Loss.
+
+### Observation
+
+- Using only MSE causes the network to overfit the noisy observations.
+- Adding the smoothness penalty (λ = 0.02) successfully reconstructs the underlying sinusoidal signal while suppressing noise.
+
+Although the total loss becomes larger after adding the regularization term, the predicted signal is smoother and follows the true trend more accurately.
+
+---
+
+## Motivation
+
+In structural engineering applications, measured acceleration records often contain high-frequency noise.
+
+Training a neural network using only MSE may reproduce this noise, which can lead to unrealistic structural responses during finite element analysis.
+
+By penalizing the curvature of the predicted signal, the network produces physically meaningful denoised acceleration histories suitable for structural dynamic analysis.
+
+---
+
+## Future Work
+
+- Extension to earthquake acceleration denoising
+- Application to structural health monitoring
+- Integration with finite element simulations
+- Comparison with wavelet-based denoising techniques
